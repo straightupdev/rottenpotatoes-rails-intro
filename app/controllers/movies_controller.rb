@@ -11,18 +11,13 @@ class MoviesController < ApplicationController
 
   def index
     
-    if !params[:sort].nil?
-      session[:sort] = params[:sort]
-    elsif !session[:sort].nil? 
-      params[:sort] = session[:sort]
+    if !params[:sort].nil? then session[:sort] = params[:sort] end
+    if !params[:ratings].nil? then session[:ratings] = params[:ratings] end
+      
+    if (params[:sort].nil? && !session[:sort].nil?) || (params[:ratings].nil? && !session[:ratings].nil?)
+      redirect_to movies_path sort: session[:sort], ratings: session[:ratings]
     end
-    
-    if !params[:ratings].nil?
-      session[:ratings] = params[:ratings]
-    elsif !session[:ratings].nil?
-      params[:ratings] = session[:ratings]
-    end
-    
+
     @all_ratings = Movie.get_all_ratings
     
     if session[:ratings].nil?
