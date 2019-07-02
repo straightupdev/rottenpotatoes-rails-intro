@@ -10,22 +10,39 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @filtering = String.new # initialize string to prevent view exceptions
-    @all_ratings = Movie.get_all_ratings # get ratings from model
-    sorting = params[:sort] # retrieve sorting method from URI
     
-    # retrieve filters from URI if hash isn't empty
+    if !params[:sort].nil?
+      session[:sort] = params[:sort]
+    elsif !session[:sort].nil?
+      params[:sort] = session[:sort]
+    end
+    
     if !params[:ratings].nil?
-      @filtering = params[:ratings].keys
-      @movies = Movie.with_ratings(@filtering)
-    else
+      begin
+        session[:ratings] = params[:ratings].keys
+      rescue
+        session[:ratings] = params[:ratings]
+      end
+    elsif
+      params[:ratings] = session[:ratings]
+    end
+
+    @all_ratings = Movie.get_all_ratings
+    
+    if session[:ratings].nil?
+      @filtering = String.new # initialize string to prevent view exceptions
       @movies = Movie.all
+    else
+      @filtering = session[:ratings]
+      @movies = Movie.with_ratings(@filtering)
     end
-    if sorting == 'title'
-      @movies = Movie.order(:title)
-    elsif sorting == 'date'
-      @movies = Movie.order(:release_date)
+    
+    if session[:sort] == 'title'
+      @movies.order!(:title)
+    elsif session[:sort] == 'date'
+      @movies.order!(:release_date)
     end
+    
   end
 
   def new
