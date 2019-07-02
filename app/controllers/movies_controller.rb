@@ -11,6 +11,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.get_all_ratings # get ratings from model
     sorting = params[:sort] # retrieve sorting method from URI
     if sorting == 'title'
       @movies = Movie.order(:title)
@@ -19,6 +20,7 @@ class MoviesController < ApplicationController
     else
       @movies = Movie.all
     end
+    byebug
   end
 
   def new
