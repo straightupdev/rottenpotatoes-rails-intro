@@ -12,12 +12,17 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.get_all_ratings # get ratings from model
     sorting = params[:sort] # retrieve sorting method from URI
+    # retrieve filters from URI if hash isn't empty
+    if !params[:ratings].nil?
+      filtering = params[:ratings].keys
+      @movies = Movie.with_ratings(filtering)
+    else
+      @movies = Movie.all
+    end
     if sorting == 'title'
       @movies = Movie.order(:title)
     elsif sorting == 'date'
       @movies = Movie.order(:release_date)
-    else
-      @movies = Movie.all
     end
   end
 
