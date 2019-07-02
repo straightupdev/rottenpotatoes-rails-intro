@@ -10,12 +10,14 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @filtering = String.new # initialize string to prevent view exceptions
     @all_ratings = Movie.get_all_ratings # get ratings from model
     sorting = params[:sort] # retrieve sorting method from URI
+    
     # retrieve filters from URI if hash isn't empty
     if !params[:ratings].nil?
-      filtering = params[:ratings].keys
-      @movies = Movie.with_ratings(filtering)
+      @filtering = params[:ratings].keys
+      @movies = Movie.with_ratings(@filtering)
     else
       @movies = Movie.all
     end
