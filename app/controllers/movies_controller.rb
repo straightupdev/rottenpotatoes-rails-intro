@@ -13,27 +13,23 @@ class MoviesController < ApplicationController
     
     if !params[:sort].nil?
       session[:sort] = params[:sort]
-    elsif !session[:sort].nil?
+    elsif !session[:sort].nil? 
       params[:sort] = session[:sort]
     end
     
     if !params[:ratings].nil?
-      begin
-        session[:ratings] = params[:ratings].keys
-      rescue
-        session[:ratings] = params[:ratings]
-      end
-    elsif
+      session[:ratings] = params[:ratings]
+    elsif !session[:ratings].nil?
       params[:ratings] = session[:ratings]
     end
-
+    
     @all_ratings = Movie.get_all_ratings
     
     if session[:ratings].nil?
       @filtering = String.new # initialize string to prevent view exceptions
       @movies = Movie.all
     else
-      @filtering = session[:ratings]
+      @filtering = session[:ratings].keys
       @movies = Movie.with_ratings(@filtering)
     end
     
